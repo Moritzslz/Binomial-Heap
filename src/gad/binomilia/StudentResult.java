@@ -7,8 +7,6 @@ import java.util.List;
 
 public class StudentResult implements Result {
 	private List<BinomialTreeNode> currentHeap = new ArrayList<>();
-	// Use this in a method to print the current Heap:
-	// System.out.println(BinomialHeap.dot(currentHeap));
 
 	@Override
 	public void startInsert(int value, Collection<BinomialTreeNode> heap) {
@@ -75,5 +73,10 @@ public class StudentResult implements Result {
 	public void addToIntermediateStep(BinomialTreeNode tree) {
 		System.out.println("Es wurde ein weiter Baum zum Zwischenschritt hinzugefügt");
 		currentHeap.add(tree);
+	}
+
+	@Override
+	public void printCurrentIntermediateStep() {
+		System.out.println(BinomialHeap.dot(currentHeap));
 	}
 }

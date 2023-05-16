@@ -22,4 +22,6 @@ public interface Result {
 	void addToIntermediateStep(BinomialTreeNode[] heap);
 
 	void addToIntermediateStep(BinomialTreeNode tree);
+
+	void printCurrentIntermediateStep();
 }
