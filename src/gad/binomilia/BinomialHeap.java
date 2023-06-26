@@ -7,14 +7,28 @@ import java.util.List;
 
 public class BinomialHeap {
 
+	private ArrayList<BinomialTreeNode> binomialHeap;
 	public BinomialHeap() {
+		this.binomialHeap = new ArrayList<>();
 	}
 
 	public int min() {
-		return 0;
+		return binomialHeap.get(0).min();
 	}
 
 	public void insert(int key, Result result) {
+		BinomialTreeNode nNode = new BinomialTreeNode(key);
+		binomialHeap.add(nNode);
+		if (binomialHeap.size() % 2 == 0) {
+			for (int i = 1; i < binomialHeap.size(); i++) {
+				if (binomialHeap.get(i - 1).rank() == binomialHeap.get(i).rank()) {
+					BinomialTreeNode temp = BinomialTreeNode.merge(binomialHeap.get(i - 1), binomialHeap.get(i));
+					binomialHeap.remove(binomialHeap.get(i - 1));
+					binomialHeap.remove(binomialHeap.get(i));
+					binomialHeap.add(temp);
+				}
+			}
+		}
 	}
 
 	public int deleteMin(Result result) {
