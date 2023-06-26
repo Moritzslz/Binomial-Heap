@@ -1,6 +1,5 @@
 package gad.binomilia;
 
-import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
 public class BinomialTreeNode {
@@ -12,6 +11,11 @@ public class BinomialTreeNode {
 	public BinomialTreeNode(int element) {
 		this.element = element;
 		children = new BinomialTreeNode[2];
+		if (parent != null) {
+			rank = parent.rank() + 1;
+		} else {
+			rank = 0;
+		}
 	}
 
 	public int min() {
