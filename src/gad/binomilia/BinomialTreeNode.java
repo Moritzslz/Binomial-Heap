@@ -1,7 +1,6 @@
 package gad.binomilia;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 
 public class BinomialTreeNode {
@@ -30,12 +29,12 @@ public class BinomialTreeNode {
 			if (a.min() <= b.min()) {
 				// a is the new root
 				a.children.add(b);
-				a.children.sort(Comparator.comparing(BinomialTreeNode::min));
+				//a.children.sort(Comparator.comparing(BinomialTreeNode::min));
 				return a;
 			} else {
 				// b is the new root
 				b.children.add(a);
-				b.children.sort(Comparator.comparing(BinomialTreeNode::min));
+				//b.children.sort(Comparator.comparing(BinomialTreeNode::min));
 				return b;
 			}
 		} else {
