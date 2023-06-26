@@ -1,17 +1,16 @@
 package gad.binomilia;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class BinomialTreeNode {
 	private int element;
-	private ArrayList<BinomialTreeNode[]> tree;
-
-	public ArrayList<BinomialTreeNode[]> getTree() {
-		return tree;
-	}
+	private BinomialTreeNode parent;
+	private ArrayList<BinomialTreeNode> children;
 
 	public BinomialTreeNode(int element) {
 		this.element = element;
+		this.children = new ArrayList<>();
 	}
 
 	public int min() {
@@ -19,26 +18,30 @@ public class BinomialTreeNode {
 	}
 
 	public int rank() {
-		return 0;
+		if (parent != null) {
+			return children.size() + 1;
+		} else {
+			return children.size();
+		}
 	}
 
 	public BinomialTreeNode getChildWithRank(int rank) {
-		return tree.get(rank)[0];
+		return children.get(rank);
 	}
 
 	public static BinomialTreeNode merge(BinomialTreeNode a, BinomialTreeNode b) {
 		if (a.rank() == b.rank()) {
 			if (a.min() < b.min()) {
 				// a is the new root
-				for (BinomialTreeNode[] node : b.getTree()) {
-					a.tree.add(node);
-				}
+				b.parent = a;
+				a.children.add(b);
+				a.children.sort(Comparator.comparing(BinomialTreeNode::min));
 				return a;
 			} else {
 				// b is the new root
-				for (BinomialTreeNode[] node : a.getTree()) {
-					b.tree.add(node);
-				}
+				a.parent = b;
+				b.children.add(a);
+				b.children.sort(Comparator.comparing(BinomialTreeNode::min));
 				return b;
 			}
 		}
