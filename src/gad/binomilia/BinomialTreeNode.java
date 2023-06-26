@@ -26,7 +26,7 @@ public class BinomialTreeNode {
 
 	public static BinomialTreeNode merge(BinomialTreeNode a, BinomialTreeNode b) {
 		if (a.rank() == b.rank()) {
-			if (a.min() < b.min()) {
+			if (a.min() <= b.min()) {
 				// a is the new root
 				a.children.add(b);
 				a.children.sort(Comparator.comparing(BinomialTreeNode::min));
