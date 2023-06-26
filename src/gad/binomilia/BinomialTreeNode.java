@@ -1,16 +1,17 @@
 package gad.binomilia;
 
+import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
 public class BinomialTreeNode {
 	private int element;
 	private int rank;
-	private static BinomialTreeNode[] children;
+	private static ArrayList<BinomialTreeNode> children;
 	private static BinomialTreeNode parent;
 
 	public BinomialTreeNode(int element) {
 		this.element = element;
-		children = new BinomialTreeNode[2];
+		children = new ArrayList<>();
 		if (parent != null) {
 			rank = parent.rank() + 1;
 		} else {
@@ -26,19 +27,15 @@ public class BinomialTreeNode {
 		return rank;
 	}
 
-	public void setRank(int rank) {
-		this.rank = rank;
-	}
-
 	public BinomialTreeNode getChildWithRank(int rank) {
 		if (this.rank == rank) {
-			if (children[0] != null) {
-				return children[0];
+			if (children.get(0) != null) {
+				return children.get(0);
 			} else {
 				throw new NoSuchElementException();
 			}
 		} else {
-			return children[0].getChildWithRank(rank);
+			return children.get(0).getChildWithRank(rank);
 		}
 	}
 
@@ -60,19 +57,12 @@ public class BinomialTreeNode {
 		parent = node;
 	}
 
-	public static boolean addChild(BinomialTreeNode node) {
-		if (children[0] == null) {
-			children[0] = node;
-			return true;
-		} else if (children[1] == null) {
-			children[1] = node;
-			return true;
-		} else {
-			return false;
-		}
+	public void addChild(BinomialTreeNode node) {
+		node.addParent(this);
+		children.add(node);
 	}
 
-	public static BinomialTreeNode[] getChildren() {
+	public static ArrayList<BinomialTreeNode> getChildren() {
 		return children;
 	}
 
