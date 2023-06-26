@@ -1,59 +1,26 @@
 package gad.binomilia;
 
-import java.util.ArrayList;
-
 public class BinomialTreeNode {
 	private int element;
-	private int rank;
-	public static ArrayList<BinomialTreeNode> children;
-	public static BinomialTreeNode parent;
 
 	public BinomialTreeNode(int element) {
 		this.element = element;
 	}
 
 	public int min() {
-		return element;
+		return 0;
 	}
 
 	public int rank() {
-		if (children.isEmpty()) {
-			rank = 0;
-		} else {
-			rank = children.size();
-		}
-		return rank;
+		return 0;
 	}
 
 	public BinomialTreeNode getChildWithRank(int rank) {
-		return children.get(children.size() - 1 - rank);
+		return null;
 	}
 
 	public static BinomialTreeNode merge(BinomialTreeNode a, BinomialTreeNode b) {
-		if (a.element < b.element) {
-			// a is new root
-			a.addChild(b);
-			b.addParent(a);
-			return a;
-		} else {
-			// b is new root
-			b.addChild(a);
-			a.addParent(b);
-			return b;
-		}
-	}
-
-	public static void addParent(BinomialTreeNode node) {
-		parent = node;
-	}
-
-	public void addChild(BinomialTreeNode node) {
-		node.addParent(this);
-		children.add(node);
-	}
-
-	public static ArrayList<BinomialTreeNode> getChildren() {
-		return children;
+		return null;
 	}
 
 	public int dotNode(StringBuilder sb, int idx) {
