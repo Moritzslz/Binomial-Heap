@@ -5,7 +5,6 @@ import java.util.Comparator;
 
 public class BinomialTreeNode {
 	private int element;
-	private BinomialTreeNode parent;
 	private ArrayList<BinomialTreeNode> children;
 
 	public BinomialTreeNode(int element) {
@@ -18,11 +17,7 @@ public class BinomialTreeNode {
 	}
 
 	public int rank() {
-		if (parent != null) {
-			return children.size() + 1;
-		} else {
-			return children.size();
-		}
+		return children.size();
 	}
 
 	public BinomialTreeNode getChildWithRank(int rank) {
@@ -33,13 +28,11 @@ public class BinomialTreeNode {
 		if (a.rank() == b.rank()) {
 			if (a.min() < b.min()) {
 				// a is the new root
-				b.parent = a;
 				a.children.add(b);
 				a.children.sort(Comparator.comparing(BinomialTreeNode::min));
 				return a;
 			} else {
 				// b is the new root
-				a.parent = b;
 				b.children.add(a);
 				b.children.sort(Comparator.comparing(BinomialTreeNode::min));
 				return b;
