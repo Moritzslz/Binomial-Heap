@@ -18,7 +18,7 @@ public class BinomialTreeNode {
 	}
 
 	public int rank() {
-		return this.children.size();
+		return children.size();
 	}
 
 	public BinomialTreeNode getChildWithRank(int rank) {
@@ -38,8 +38,13 @@ public class BinomialTreeNode {
 				b.children.sort(Comparator.comparing(BinomialTreeNode::min));
 				return b;
 			}
+		} else {
+			throw new IllegalArgumentException();
 		}
-		return a;
+	}
+
+	public ArrayList<BinomialTreeNode> getChildren() {
+		return children;
 	}
 
 	public int dotNode(StringBuilder sb, int idx) {
