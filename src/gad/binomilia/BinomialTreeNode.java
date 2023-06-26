@@ -1,6 +1,7 @@
 package gad.binomilia;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 
 public class BinomialTreeNode {
@@ -17,7 +18,7 @@ public class BinomialTreeNode {
 	}
 
 	public int rank() {
-		return children.size();
+		return this.children.size();
 	}
 
 	public BinomialTreeNode getChildWithRank(int rank) {
