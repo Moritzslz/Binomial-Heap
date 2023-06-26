@@ -1,22 +1,15 @@
 package gad.binomilia;
 
 import java.util.ArrayList;
-import java.util.NoSuchElementException;
 
 public class BinomialTreeNode {
 	private int element;
 	private int rank;
-	private static ArrayList<BinomialTreeNode> children;
-	private static BinomialTreeNode parent;
+	public static ArrayList<BinomialTreeNode> children;
+	public static BinomialTreeNode parent;
 
 	public BinomialTreeNode(int element) {
 		this.element = element;
-		children = new ArrayList<>();
-		if (parent != null) {
-			rank = parent.rank() + 1;
-		} else {
-			rank = 0;
-		}
 	}
 
 	public int min() {
@@ -24,19 +17,16 @@ public class BinomialTreeNode {
 	}
 
 	public int rank() {
+		if (children.isEmpty()) {
+			rank = 0;
+		} else {
+			rank = children.size();
+		}
 		return rank;
 	}
 
 	public BinomialTreeNode getChildWithRank(int rank) {
-		if (this.rank == rank) {
-			if (children.get(0) != null) {
-				return children.get(0);
-			} else {
-				throw new NoSuchElementException();
-			}
-		} else {
-			return children.get(0).getChildWithRank(rank);
-		}
+		return children.get(children.size() - 1 - rank);
 	}
 
 	public static BinomialTreeNode merge(BinomialTreeNode a, BinomialTreeNode b) {
