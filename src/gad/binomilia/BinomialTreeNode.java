@@ -1,14 +1,21 @@
 package gad.binomilia;
 
+import java.util.ArrayList;
+
 public class BinomialTreeNode {
 	private int element;
+	private ArrayList<BinomialTreeNode[]> tree;
+
+	public ArrayList<BinomialTreeNode[]> getTree() {
+		return tree;
+	}
 
 	public BinomialTreeNode(int element) {
 		this.element = element;
 	}
 
 	public int min() {
-		return 0;
+		return element;
 	}
 
 	public int rank() {
@@ -16,11 +23,26 @@ public class BinomialTreeNode {
 	}
 
 	public BinomialTreeNode getChildWithRank(int rank) {
-		return null;
+		return tree.get(rank)[0];
 	}
 
 	public static BinomialTreeNode merge(BinomialTreeNode a, BinomialTreeNode b) {
-		return null;
+		if (a.rank() == b.rank()) {
+			if (a.min() < b.min()) {
+				// a is the new root
+				for (BinomialTreeNode[] node : b.getTree()) {
+					a.tree.add(node);
+				}
+				return a;
+			} else {
+				// b is the new root
+				for (BinomialTreeNode[] node : a.getTree()) {
+					b.tree.add(node);
+				}
+				return b;
+			}
+		}
+		return a;
 	}
 
 	public int dotNode(StringBuilder sb, int idx) {
