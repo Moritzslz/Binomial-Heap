@@ -32,7 +32,7 @@ public class BinomialHeap {
 		}
 		ArrayList<BinomialTreeNode> nRoots = new ArrayList<>();
 		nRoots.add(nNode);
-		roots = merge(roots, nRoots, 1);
+		merge(nRoots);
 		result.addToIntermediateStep(roots);
 	}
 
@@ -45,6 +45,7 @@ public class BinomialHeap {
 		}
 	}
 
+	/*
 	public ArrayList<BinomialTreeNode> merge(ArrayList<BinomialTreeNode> a, ArrayList<BinomialTreeNode> b, int nB) {
 		ArrayList<BinomialTreeNode> nRoots = new ArrayList<>();
 		// Get the number of elements of each tree
@@ -99,6 +100,63 @@ public class BinomialHeap {
 			}
 		}
 		return nRoots;
+	}
+	 */
+
+	private void merge(ArrayList<BinomialTreeNode> newTrees) {
+		int maxSize = Math.max(roots.size(), newTrees.size());
+		ArrayList<BinomialTreeNode> mergedTrees = new ArrayList<>(maxSize + 1);
+
+		int carry = 0;
+		for (int i = 0; i < maxSize; i++) {
+			BinomialTreeNode tree1 = i < roots.size() ? roots.get(i) : null;
+			BinomialTreeNode tree2 = i < newTrees.size() ? newTrees.get(i) : null;
+
+			int rank = carry;
+			if (tree1 != null) {
+				rank += tree1.rank();
+			}
+			if (tree2 != null) {
+				rank += tree2.rank();
+			}
+
+			if (tree1 == null && tree2 == null) {
+				break;
+			}
+
+			if (tree1 == null) {
+				carry = 0;
+			} else if (tree2 == null) {
+				carry = 0;
+			} else if (tree1.rank() == tree2.rank()) {
+				mergedTrees.add(null);
+				carry = 1;
+			} else {
+				carry = 0;
+			}
+		}
+
+		if (carry == 1) {
+			mergedTrees.add(null);
+		}
+
+		for (int i = 0; i < mergedTrees.size(); i++) {
+			BinomialTreeNode tree1 = i < roots.size() ? roots.get(i) : null;
+			BinomialTreeNode tree2 = i < newTrees.size() ? newTrees.get(i) : null;
+
+			BinomialTreeNode mergedTree;
+			if (tree1 == null) {
+				mergedTree = tree2;
+			} else if (tree2 == null) {
+				mergedTree = tree1;
+			} else {
+				mergedTree = BinomialTreeNode.merge(tree1, tree2);
+			}
+
+			mergedTrees.set(i, mergedTree);
+		}
+
+		roots = mergedTrees;
 	}
 
 	public static int getBit(int element, int binPlace) {
