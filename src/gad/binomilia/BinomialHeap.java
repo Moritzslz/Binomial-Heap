@@ -6,9 +6,10 @@ public class BinomialHeap {
 
 	private ArrayList<BinomialTreeNode> roots;
 	private int minPointer;
+	private int n;
+
 	public BinomialHeap() {
 		this.roots = new ArrayList<>();
-		minPointer = 0;
 	}
 
 	public int min() {
@@ -21,10 +22,17 @@ public class BinomialHeap {
 
 	public void insert(int key, Result result) {
 		result.startInsert(key, roots);
-		ArrayList<BinomialTreeNode> nHeap = new ArrayList<>();
 		BinomialTreeNode nNode = new BinomialTreeNode(key);
-		nHeap.add(nNode);
-		roots = merge(roots, nHeap);
+		if (roots.isEmpty()) {
+			roots.add(nNode);
+			n = 1;
+			minPointer = 0;
+			result.addToIntermediateStep(roots);
+			return;
+		}
+		ArrayList<BinomialTreeNode> nRoots = new ArrayList<>();
+		nRoots.add(nNode);
+		roots = merge(roots, nRoots, 1);
 		result.addToIntermediateStep(roots);
 	}
 
@@ -37,31 +45,25 @@ public class BinomialHeap {
 		}
 	}
 
-	public ArrayList<BinomialTreeNode> merge(ArrayList<BinomialTreeNode> a, ArrayList<BinomialTreeNode> b) {
+	public ArrayList<BinomialTreeNode> merge(ArrayList<BinomialTreeNode> a, ArrayList<BinomialTreeNode> b, int nB) {
 		ArrayList<BinomialTreeNode> nRoots = new ArrayList<>();
 		// Get the number of elements of each tree
-		int nA = 0;
-		int nB = 0;
-		for (int i = 0; i < a.size(); i++){
-			nA += a.get(i).getChildren().size() + 1;
-		}
-		for (int i = 0; i < b.size(); i++){
-			nB += b.get(i).getChildren().size() + 1;
-		}
+		int nA = n;
+
 		// Compare bits of each n
 		for (int i = 0; i < 32; i++) {
 			if (getBit(nA, i) == 1 && getBit(nB, i) == 1) {
 				// Merge trees of rank i
 				// Get root with rank i from a
-				BinomialTreeNode aRoot = a.get(0);
-				for (int aIdx = 0; aIdx < a.size(); aIdx++) {
+				BinomialTreeNode aRoot = a.get(a.size() - 1);
+				for (int aIdx = a.size() - 1; aIdx >= 0; aIdx--) {
 					if (a.get(aIdx).rank() == i) {
 						aRoot = a.get(aIdx);
 					}
 				}
 				// Get root with rank i from b
-				BinomialTreeNode bRoot = b.get(0);
-				for (int bIdx = 0; bIdx < a.size(); bIdx++) {
+				BinomialTreeNode bRoot = b.get(b.size() - 1);
+				for (int bIdx = b.size() - 1; bIdx >= 0; bIdx--) {
 					if (b.get(bIdx).rank() == i) {
 						bRoot = a.get(bIdx);
 					}
@@ -69,8 +71,8 @@ public class BinomialHeap {
 				BinomialTreeNode nNode = BinomialTreeNode.merge(aRoot, bRoot);
 				nRoots.add(nNode);
 			} else if (getBit(nA, i) == 1) {
-				BinomialTreeNode aRoot = a.get(0);
-				for (int aIdx = 0; aIdx < a.size(); aIdx++) {
+				BinomialTreeNode aRoot = a.get(a.size() - 1);
+				for (int aIdx = a.size() - 1; aIdx >= 0; aIdx--) {
 					if (a.get(aIdx).rank() == i) {
 						aRoot = a.get(aIdx);
 					}
@@ -78,7 +80,7 @@ public class BinomialHeap {
 				nRoots.add(aRoot);
 			} else if (getBit(nB, i) == 1) {
 				BinomialTreeNode bRoot = b.get(0);
-				for (int bIdx = 0; bIdx < a.size(); bIdx++) {
+				for (int bIdx = b.size() - 1; bIdx >= 0; bIdx--) {
 					if (b.get(bIdx).rank() == i) {
 						bRoot = a.get(bIdx);
 					}
@@ -88,6 +90,14 @@ public class BinomialHeap {
 				// Add nothing
 			}
 		}
+		int minElement = nRoots.get(0).min();
+		minPointer = 0;
+		for (int i = 1; i < nRoots.size(); i++) {
+			if (nRoots.get(i).min() < minElement) {
+				minElement = nRoots.get(i).min();
+				minPointer = i;
+			}
+		}
 		return nRoots;
 	}
 
@@ -95,7 +105,9 @@ public class BinomialHeap {
 		return (element >> binPlace) & 1;
 	}
 
-
+	public int getN() {
+		return n;
+	}
 
 	public static String dot(BinomialTreeNode[] trees) {
 		return dot(Arrays.stream(trees).toList());
