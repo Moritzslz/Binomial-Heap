@@ -22,15 +22,12 @@ public class BinomialHeap {
 		BinomialTreeNode nNode = new BinomialTreeNode(key);
 		binomialHeap.add(nNode);
 		result.logIntermediateStep(nNode);
-		if (binomialHeap.size() % 2 == 0) {
-			int i = 1;
+		for (int i = binomialHeap.size() - 1; i > 0; i--) {
 			if (binomialHeap.get(i - 1).rank() == binomialHeap.get(i).rank()) {
 				BinomialTreeNode temp = BinomialTreeNode.merge(binomialHeap.get(i - 1), binomialHeap.get(i));
 				binomialHeap.remove(binomialHeap.get(i - 1));
 				binomialHeap.remove(binomialHeap.get(i));
 				binomialHeap.add(temp);
-				result.addToIntermediateStep(temp);
-				result.addToIntermediateStep(temp.getChildren());
 				result.addToIntermediateStep(binomialHeap);
 			}
 		}
