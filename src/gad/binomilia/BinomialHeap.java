@@ -21,7 +21,17 @@ public class BinomialHeap {
 
 	public void insert(int key, Result result) {
 		result.startInsert(key, roots);
-		// TODO
+		BinomialTreeNode nNode = new BinomialTreeNode(key);
+		roots.add(nNode);
+		result.logIntermediateStep(roots);
+		for (int i = roots.size() - 1; i > 0; i--) {
+			if (roots.get(i).rank() == roots.get(i - 1).rank()) {
+				BinomialTreeNode nTree = BinomialTreeNode.merge(roots.get(i), roots.get(i - 1));
+				roots.remove(i - 1);
+				roots.remove(--i);
+				roots.add(nTree);
+			}
+		}
 	}
 
 	public int deleteMin(Result result) {

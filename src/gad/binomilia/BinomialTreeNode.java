@@ -1,7 +1,6 @@
 package gad.binomilia;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 
 public class BinomialTreeNode {
 	private int element;
