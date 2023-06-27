@@ -1,9 +1,6 @@
 package gad.binomilia;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class BinomialHeap {
 
@@ -13,12 +10,18 @@ public class BinomialHeap {
 	}
 
 	public int min() {
-		return binomialHeap.get(0).min();
+		if (!binomialHeap.isEmpty()) {
+			return binomialHeap.get(0).min();
+		} else {
+			throw new NoSuchElementException();
+		}
 	}
 
 	public void insert(int key, Result result) {
+		result.startInsert(key, binomialHeap);
 		BinomialTreeNode nNode = new BinomialTreeNode(key);
 		binomialHeap.add(nNode);
+		result.logIntermediateStep(nNode);
 		if (binomialHeap.size() % 2 == 0) {
 			for (int i = 1; i < binomialHeap.size(); i++) {
 				if (binomialHeap.get(i - 1).rank() == binomialHeap.get(i).rank()) {
@@ -26,12 +29,16 @@ public class BinomialHeap {
 					binomialHeap.remove(binomialHeap.get(i - 1));
 					binomialHeap.remove(binomialHeap.get(i));
 					binomialHeap.add(temp);
+					result.addToIntermediateStep(temp);
+					result.addToIntermediateStep(temp.getChildren());
+					result.addToIntermediateStep(binomialHeap);
 				}
 			}
 		}
 	}
 
 	public int deleteMin(Result result) {
+		result.startDeleteMin(binomialHeap);
 		return 0;
 	}
 
