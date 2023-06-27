@@ -19,17 +19,18 @@ public class BinomialHeap {
 
 	public void insert(int key, Result result) {
 		result.startInsert(key, binomialHeap);
-		BinomialTreeNode nNode = new BinomialTreeNode(key);
-		binomialHeap.add(nNode);
-		result.logIntermediateStep(nNode);
-		for (int i = binomialHeap.size() - 1; i > 0; i--) {
-			if (binomialHeap.get(i - 1).rank() == binomialHeap.get(i).rank()) {
-				BinomialTreeNode temp = BinomialTreeNode.merge(binomialHeap.get(i - 1), binomialHeap.get(i));
-				binomialHeap.remove(binomialHeap.get(i - 1));
-				binomialHeap.remove(binomialHeap.get(i));
-				binomialHeap.add(temp);
-				result.addToIntermediateStep(binomialHeap);
+		BinomialTreeNode node = new BinomialTreeNode(key);
+		binomialHeap.add(node);
+		result.logIntermediateStep(binomialHeap);
+		if (node.rank() == binomialHeap.get(binomialHeap.size() - 2).rank()) {
+			BinomialTreeNode merged = BinomialTreeNode.merge(node, binomialHeap.get(binomialHeap.size() - 2));
+			binomialHeap.remove(node);
+			binomialHeap.remove(binomialHeap.get(binomialHeap.size() - 2));
+			binomialHeap.add(merged);
+			for (BinomialTreeNode child : merged.getChildren()) {
+				binomialHeap.add(child);
 			}
+			result.addToIntermediateStep(binomialHeap);
 		}
 	}
 
