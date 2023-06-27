@@ -27,16 +27,18 @@ public class BinomialHeap {
 			minPointer = roots.size() - 1;
 		}
 		result.logIntermediateStep(roots);
-		int i = roots.size() - 1;
-		if (roots.get(i).rank() == roots.get(i - 1).rank()) {
-			BinomialTreeNode nTree = BinomialTreeNode.merge(roots.get(i), roots.get(i - 1));
-			roots.remove(i - 1);
-			roots.remove(--i);
-			roots.add(nTree);
-			if (nTree.min() <= roots.get(minPointer).min()) {
-				minPointer = roots.size() - 1;
+		if (roots.size() > 1) {
+			int i = roots.size() - 1;
+			if (roots.get(i).rank() == roots.get(i - 1).rank()) {
+				BinomialTreeNode nTree = BinomialTreeNode.merge(roots.get(i), roots.get(i - 1));
+				roots.remove(i - 1);
+				roots.remove(--i);
+				roots.add(nTree);
+				if (nTree.min() <= roots.get(minPointer).min()) {
+					minPointer = roots.size() - 1;
+				}
+				minPointer--;
 			}
-			minPointer--;
 		}
 	}
 
