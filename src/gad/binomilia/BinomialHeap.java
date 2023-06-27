@@ -21,25 +21,11 @@ public class BinomialHeap {
 
 	public void insert(int key, Result result) {
 		result.startInsert(key, roots);
+		ArrayList<BinomialTreeNode> nHeap = new ArrayList<>();
 		BinomialTreeNode nNode = new BinomialTreeNode(key);
-		roots.add(nNode);
-		if (key < roots.get(minPointer).min()) {
-			minPointer = roots.size() - 1;
-		}
-		result.logIntermediateStep(roots);
-		if (roots.size() > 1) {
-			int i = roots.size() - 1;
-			if (roots.get(i).rank() == roots.get(i - 1).rank()) {
-				BinomialTreeNode nTree = BinomialTreeNode.merge(roots.get(i), roots.get(i - 1));
-				roots.remove(i - 1);
-				roots.remove(--i);
-				roots.add(nTree);
-				if (nTree.min() <= roots.get(minPointer).min()) {
-					minPointer = roots.size() - 1;
-				}
-				minPointer--;
-			}
-		}
+		nHeap.add(nNode);
+		roots = merge(roots, nHeap);
+		result.addToIntermediateStep(roots);
 	}
 
 	public int deleteMin(Result result) {
@@ -50,6 +36,66 @@ public class BinomialHeap {
 			throw new NoSuchElementException();
 		}
 	}
+
+	public ArrayList<BinomialTreeNode> merge(ArrayList<BinomialTreeNode> a, ArrayList<BinomialTreeNode> b) {
+		ArrayList<BinomialTreeNode> nRoots = new ArrayList<>();
+		// Get the number of elements of each tree
+		int nA = 0;
+		int nB = 0;
+		for (int i = 0; i < a.size(); i++){
+			nA += a.get(i).getChildren().size() + 1;
+		}
+		for (int i = 0; i < b.size(); i++){
+			nB += b.get(i).getChildren().size() + 1;
+		}
+		// Compare bits of each n
+		for (int i = 0; i < 32; i++) {
+			if (getBit(nA, i) == 1 && getBit(nB, i) == 1) {
+				// Merge trees of rank i
+				// Get root with rank i from a
+				BinomialTreeNode aRoot = a.get(0);
+				for (int aIdx = 0; aIdx < a.size(); aIdx++) {
+					if (a.get(aIdx).rank() == i) {
+						aRoot = a.get(aIdx);
+					}
+				}
+				// Get root with rank i from b
+				BinomialTreeNode bRoot = b.get(0);
+				for (int bIdx = 0; bIdx < a.size(); bIdx++) {
+					if (b.get(bIdx).rank() == i) {
+						bRoot = a.get(bIdx);
+					}
+				}
+				BinomialTreeNode nNode = BinomialTreeNode.merge(aRoot, bRoot);
+				nRoots.add(nNode);
+			} else if (getBit(nA, i) == 1) {
+				BinomialTreeNode aRoot = a.get(0);
+				for (int aIdx = 0; aIdx < a.size(); aIdx++) {
+					if (a.get(aIdx).rank() == i) {
+						aRoot = a.get(aIdx);
+					}
+				}
+				nRoots.add(aRoot);
+			} else if (getBit(nB, i) == 1) {
+				BinomialTreeNode bRoot = b.get(0);
+				for (int bIdx = 0; bIdx < a.size(); bIdx++) {
+					if (b.get(bIdx).rank() == i) {
+						bRoot = a.get(bIdx);
+					}
+				}
+				nRoots.add(bRoot);
+			} else {
+				// Add nothing
+			}
+		}
+		return nRoots;
+	}
+
+	public static int getBit(int element, int binPlace) {
+		return (element >> binPlace) & 1;
+	}
+
+
 
 	public static String dot(BinomialTreeNode[] trees) {
 		return dot(Arrays.stream(trees).toList());
