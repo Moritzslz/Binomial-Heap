@@ -22,7 +22,7 @@ public class BinomialHeap {
 		BinomialTreeNode node = new BinomialTreeNode(key);
 		binomialHeap.add(node);
 		result.logIntermediateStep(binomialHeap);
-		if (node.rank() == binomialHeap.get(binomialHeap.size() - 2).rank()) {
+		while (node.rank() == binomialHeap.get(binomialHeap.size() - 2).rank()) {
 			BinomialTreeNode merged = BinomialTreeNode.merge(node, binomialHeap.get(binomialHeap.size() - 2));
 			binomialHeap.remove(node);
 			binomialHeap.remove(binomialHeap.get(binomialHeap.size() - 2));
