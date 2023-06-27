@@ -4,39 +4,50 @@ import java.util.*;
 
 public class BinomialHeap {
 
-	private ArrayList<BinomialTreeNode> binomialHeap;
+	private ArrayList<BinomialTreeNode> roots;
 	public BinomialHeap() {
-		this.binomialHeap = new ArrayList<>();
+		this.roots = new ArrayList<>();
 	}
 
 	public int min() {
-		if (!binomialHeap.isEmpty()) {
-			return binomialHeap.get(0).min();
+		if (!roots.isEmpty()) {
+			return roots.get(0).min();
 		} else {
 			throw new NoSuchElementException();
 		}
 	}
 
 	public void insert(int key, Result result) {
-		result.startInsert(key, binomialHeap);
-		BinomialTreeNode node = new BinomialTreeNode(key);
-		binomialHeap.add(node);
-		result.logIntermediateStep(binomialHeap);
-		while (node.rank() == binomialHeap.get(binomialHeap.size() - 2).rank()) {
-			BinomialTreeNode merged = BinomialTreeNode.merge(node, binomialHeap.get(binomialHeap.size() - 2));
-			binomialHeap.remove(node);
-			binomialHeap.remove(binomialHeap.get(binomialHeap.size() - 2));
-			binomialHeap.add(merged);
-			for (BinomialTreeNode child : merged.getChildren()) {
-				binomialHeap.add(child);
-			}
-			result.addToIntermediateStep(binomialHeap);
-		}
+		result.startInsert(key, roots);
+		BinomialTreeNode nRoot = new BinomialTreeNode(key);
+		roots.add(nRoot);
+		result.logIntermediateStep(roots);
+		// Merge with existing root from the same rank
+		merge(result);
 	}
 
 	public int deleteMin(Result result) {
-		result.startDeleteMin(binomialHeap);
-		return 0;
+		if (!roots.isEmpty()) {
+			result.startDeleteMin(roots);
+			return 0;
+		} else {
+			throw new NoSuchElementException();
+		}
+	}
+
+	public void merge(Result result) {
+		for (int i = roots.size() - 1; i > 0; i--) {
+			BinomialTreeNode root1 = roots.get(i);
+			BinomialTreeNode root2 = roots.get(i - 1);
+			if (root1.rank() == root2.rank()) {
+				BinomialTreeNode nRoot = BinomialTreeNode.merge(root1, root2);
+				roots.remove(root1);
+				roots.remove(root2);
+				roots.add(nRoot);
+				i++;
+				result.addToIntermediateStep(roots);
+			}
+		}
 	}
 
 	public static String dot(BinomialTreeNode[] trees) {
