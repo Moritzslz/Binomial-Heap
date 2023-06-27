@@ -23,6 +23,9 @@ public class BinomialHeap {
 		result.startInsert(key, roots);
 		BinomialTreeNode nNode = new BinomialTreeNode(key);
 		roots.add(nNode);
+		if (key < roots.get(minPointer).min()) {
+			minPointer = roots.size() - 1;
+		}
 		result.logIntermediateStep(roots);
 		for (int i = roots.size() - 1; i > 0; i--) {
 			if (roots.get(i).rank() == roots.get(i - 1).rank()) {
@@ -30,6 +33,10 @@ public class BinomialHeap {
 				roots.remove(i - 1);
 				roots.remove(--i);
 				roots.add(nTree);
+				if (nTree.min() <= roots.get(minPointer).min()) {
+					minPointer = roots.size() - 1;
+				}
+				minPointer--;
 			}
 		}
 	}
