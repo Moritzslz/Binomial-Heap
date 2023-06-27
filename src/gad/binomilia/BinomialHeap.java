@@ -23,16 +23,15 @@ public class BinomialHeap {
 		binomialHeap.add(nNode);
 		result.logIntermediateStep(nNode);
 		if (binomialHeap.size() % 2 == 0) {
-			for (int i = 1; i < binomialHeap.size(); i++) {
-				if (binomialHeap.get(i - 1).rank() == binomialHeap.get(i).rank()) {
-					BinomialTreeNode temp = BinomialTreeNode.merge(binomialHeap.get(i - 1), binomialHeap.get(i));
-					binomialHeap.remove(binomialHeap.get(i - 1));
-					binomialHeap.remove(binomialHeap.get(i));
-					binomialHeap.add(temp);
-					result.addToIntermediateStep(temp);
-					result.addToIntermediateStep(temp.getChildren());
-					result.addToIntermediateStep(binomialHeap);
-				}
+			int i = 1;
+			if (binomialHeap.get(i - 1).rank() == binomialHeap.get(i).rank()) {
+				BinomialTreeNode temp = BinomialTreeNode.merge(binomialHeap.get(i - 1), binomialHeap.get(i));
+				binomialHeap.remove(binomialHeap.get(i - 1));
+				binomialHeap.remove(binomialHeap.get(i));
+				binomialHeap.add(temp);
+				result.addToIntermediateStep(temp);
+				result.addToIntermediateStep(temp.getChildren());
+				result.addToIntermediateStep(binomialHeap);
 			}
 		}
 	}
