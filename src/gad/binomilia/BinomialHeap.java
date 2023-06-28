@@ -45,8 +45,19 @@ public class BinomialHeap {
 				roots.add(nNode);
 				n++;
 				result.logIntermediateStep(roots);
-				if (nNode.min() < roots.get(minPointer).min()) {
-					minPointer = roots.size() - 1;
+				if (minPointer < roots.size()) {
+					if (nNode.min() < roots.get(minPointer).min()) {
+						minPointer = roots.size() - 1;
+					}
+				} else {
+					// Reset minPointer
+					int min = roots.get(0).min();
+					for (int i = 1; i < roots.size(); i++) {
+						if (roots.get(i).min() < min) {
+							min = roots.get(i).min();
+							minPointer = i;
+						}
+					}
 				}
 			}
 		}
@@ -145,32 +156,11 @@ public class BinomialHeap {
 	public static void main(String[] args) {
 		BinomialHeap binomialHeap = new BinomialHeap();
 		StudentResult studentResult = new StudentResult();
-		binomialHeap.insert(4, studentResult);
-		for (int i = 0; i < binomialHeap.roots.size(); i++) {
-			System.out.println(binomialHeap.roots.get(i).min());
+		Random random = new Random();
+		for (int i = 0; i < 100; i++) {
+			binomialHeap.insert(random.nextInt(-1000, 1000), studentResult);
 		}
-		binomialHeap.insert(5, studentResult);
-		for (int i = 0; i < binomialHeap.roots.size(); i++) {
-			System.out.println(binomialHeap.roots.get(i).min());
-		}
-		binomialHeap.insert(6, studentResult);
-		for (int i = 0; i < binomialHeap.roots.size(); i++) {
-			System.out.println(binomialHeap.roots.get(i).min());
-		}
-		binomialHeap.insert(7, studentResult);
-		for (int i = 0; i < binomialHeap.roots.size(); i++) {
-			System.out.println(binomialHeap.roots.get(i).min());
-		}
-		binomialHeap.deleteMin(studentResult);
-		for (int i = 0; i < binomialHeap.roots.size(); i++) {
-			System.out.println(binomialHeap.roots.get(i).min());
-		}
-		binomialHeap.insert(7, studentResult);
-		binomialHeap.insert(8, studentResult);
-		binomialHeap.insert(9, studentResult);
-		binomialHeap.insert(7, studentResult);
-		for (int i = 0; i < binomialHeap.roots.size(); i++) {
-			System.out.println(binomialHeap.roots.get(i).min());
-		}
+		System.out.println(dot(binomialHeap.roots));
+
 	}
 }
