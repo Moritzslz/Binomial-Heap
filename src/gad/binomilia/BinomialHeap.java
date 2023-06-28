@@ -33,7 +33,7 @@ public class BinomialHeap {
 				// An element with the rank 0 is already existing
 				roots.add(nNode);
 				n++;
-				result.logIntermediateStep(nNode);
+				result.logIntermediateStep(roots);
 				for (int i = 0; i < roots.size(); i++) {
 					BinomialTreeNode node = roots.get(i);
 					if (node.rank() == nNode.rank()) {
@@ -44,6 +44,7 @@ public class BinomialHeap {
 			} else {
 				roots.add(nNode);
 				n++;
+				result.logIntermediateStep(roots);
 				if (nNode.min() < roots.get(minPointer).min()) {
 					minPointer = roots.size() - 1;
 				}
@@ -161,6 +162,13 @@ public class BinomialHeap {
 			System.out.println(binomialHeap.roots.get(i).min());
 		}
 		binomialHeap.deleteMin(studentResult);
+		for (int i = 0; i < binomialHeap.roots.size(); i++) {
+			System.out.println(binomialHeap.roots.get(i).min());
+		}
+		binomialHeap.insert(7, studentResult);
+		binomialHeap.insert(8, studentResult);
+		binomialHeap.insert(9, studentResult);
+		binomialHeap.insert(7, studentResult);
 		for (int i = 0; i < binomialHeap.roots.size(); i++) {
 			System.out.println(binomialHeap.roots.get(i).min());
 		}
