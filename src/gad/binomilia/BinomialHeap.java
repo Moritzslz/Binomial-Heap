@@ -34,6 +34,11 @@ public class BinomialHeap {
 				roots.add(nNode);
 				n++;
 				result.logIntermediateStep(roots);
+				if (minPointer < roots.size()) {
+					if (nNode.min() < roots.get(minPointer).min()) {
+						minPointer = roots.size() - 1;
+					}
+				}
 				for (int i = 0; i < roots.size(); i++) {
 					BinomialTreeNode node = roots.get(i);
 					if (node.rank() == nNode.rank()) {
@@ -50,14 +55,7 @@ public class BinomialHeap {
 						minPointer = roots.size() - 1;
 					}
 				} else {
-					// Reset minPointer
-					int min = roots.get(0).min();
-					for (int i = 1; i < roots.size(); i++) {
-						if (roots.get(i).min() < min) {
-							min = roots.get(i).min();
-							minPointer = i;
-						}
-					}
+					resetMinPointer();
 				}
 			}
 		}
@@ -76,7 +74,9 @@ public class BinomialHeap {
 					result.addToIntermediateStep(roots);
 				}
 			} else {
-				for (BinomialTreeNode child : min.getChildren()) {
+				//TODO
+				ArrayList<BinomialTreeNode> children = min.getChildren();
+				for (BinomialTreeNode child : children) {
 					roots.add(child);
 					result.addToIntermediateStep(roots);
 					for (int i = 0; i < roots.size(); i++) {
@@ -88,6 +88,7 @@ public class BinomialHeap {
 					}
 				}
 			}
+			resetMinPointer();
 			return min.min();
 		} else {
 			throw new NoSuchElementException();
@@ -116,19 +117,26 @@ public class BinomialHeap {
 				merge(roots.get(i), mergedNode, result);
 			}
 		}
-
-		// Reset minPointer
-		int min = roots.get(0).min();
-		for (int i = 1; i < roots.size(); i++) {
-			if (roots.get(i).min() < min) {
-				min = roots.get(i).min();
-				minPointer = i;
-			}
-		}
+		resetMinPointer();
 	}
 
 	public static int getBit(int element, int binPlace) {
 		return (element >> binPlace) & 1;
+	}
+
+	public void resetMinPointer() {
+		if (roots.size() > 0) {
+			int min = roots.get(0).min();
+			minPointer = 0;
+			for (int i = 1; i < roots.size(); i++) {
+				if (roots.get(i).min() < min) {
+					min = roots.get(i).min();
+					minPointer = i;
+				}
+			}
+		} else {
+			minPointer = 0;
+		}
 	}
 
 	public static String dot(BinomialTreeNode[] trees) {
@@ -161,6 +169,9 @@ public class BinomialHeap {
 			binomialHeap.insert(random.nextInt(-1000, 1000), studentResult);
 		}
 		System.out.println(dot(binomialHeap.roots));
-
+		for (int i = 0; i < 99; i++) {
+			binomialHeap.deleteMin(studentResult);
+		}
+		System.out.println(dot(binomialHeap.roots));
 	}
 }
