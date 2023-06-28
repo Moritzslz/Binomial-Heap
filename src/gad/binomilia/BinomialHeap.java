@@ -24,16 +24,23 @@ public class BinomialHeap {
 		result.startInsert(key, roots);
 		BinomialTreeNode nNode = new BinomialTreeNode(key);
 		if (roots.isEmpty()) {
-			roots.add(nNode);
+			roots.add(nNode.rank(), nNode);
 			n = 1;
 			minPointer = 0;
-			result.addToIntermediateStep(roots);
-			return;
+			result.logIntermediateStep(roots);
+		} else {
+			if (roots.get(nNode.rank()) != null) {
+				// An element with the same rank as the inserted node already exists
+				ArrayList<BinomialTreeNode> temp = new ArrayList<>();
+				temp.add(nNode.rank(), nNode);
+				merge(temp, nNode.rank(), result);
+				result.logIntermediateStep(roots);
+			} else {
+				roots.add(nNode.rank(), nNode);
+				n++;
+				result.logIntermediateStep(roots);
+			}
 		}
-		ArrayList<BinomialTreeNode> nRoots = new ArrayList<>();
-		nRoots.add(nNode);
-		roots = merge(roots, nRoots, 1);
-		result.addToIntermediateStep(roots);
 	}
 
 	public int deleteMin(Result result) {
@@ -45,40 +52,18 @@ public class BinomialHeap {
 		}
 	}
 
-	public ArrayList<BinomialTreeNode> merge(ArrayList<BinomialTreeNode> a, ArrayList<BinomialTreeNode> b, int nB) {
-		ArrayList<BinomialTreeNode> nRoots = new ArrayList<>();
-		// Get the number of elements of each tree
-		int nA = n;
-
-		// Compare bits of each n
-		for (int i = 0; i < 32; i++) {
-			if (getBit(nA, i) == 1 && getBit(nB, i) == 1) {
-				// Merge trees of rank i
-				// Get root with rank i from a
-				BinomialTreeNode aRoot = a.get(i);
-				// Get root with rank i from b
-				BinomialTreeNode bRoot = b.get(i);
-				BinomialTreeNode nNode = BinomialTreeNode.merge(aRoot, bRoot);
-				nRoots.add(nNode);
-			} else if (getBit(nA, i) == 1) {
-				BinomialTreeNode aRoot = a.get(i);
-				nRoots.add(aRoot);
-			} else if (getBit(nB, i) == 1) {
-				BinomialTreeNode bRoot = b.get(i);
-				nRoots.add(bRoot);
-			} else {
-				// Add nothing
-			}
+	public void merge(ArrayList<BinomialTreeNode> tree, int rank, Result result) {
+		BinomialTreeNode mergedNode = BinomialTreeNode.merge(roots.get(rank), tree.get(rank));
+		roots.remove(rank);
+		result.addToIntermediateStep(roots);
+		if (roots.get(mergedNode.rank()) != null) {
+			ArrayList<BinomialTreeNode> temp = new ArrayList<>();
+			temp.add(mergedNode.rank(), mergedNode);
+			merge(temp, mergedNode.rank(), result);
+		} else {
+			roots.add(mergedNode.rank(), mergedNode);
+			result.addToIntermediateStep(roots);
 		}
-		int minElement = nRoots.get(0).min();
-		minPointer = 0;
-		for (int i = 1; i < nRoots.size(); i++) {
-			if (nRoots.get(i).min() < minElement) {
-				minElement = nRoots.get(i).min();
-				minPointer = i;
-			}
-		}
-		return nRoots;
 	}
 
 	public static int getBit(int element, int binPlace) {
