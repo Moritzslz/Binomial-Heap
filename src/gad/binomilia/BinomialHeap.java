@@ -29,16 +29,14 @@ public class BinomialHeap {
 			minPointer = 0;
 			result.logIntermediateStep(roots);
 		} else {
-			if (roots.get(nNode.rank()) != null) {
-				// An element with the same rank as the inserted node already exists
-				ArrayList<BinomialTreeNode> temp = new ArrayList<>();
-				temp.add(nNode.rank(), nNode);
-				merge(temp, nNode.rank(), result);
+			if (roots.get(nNode.rank()) == null) {
+				roots.add(nNode.rank(), nNode);
 				result.logIntermediateStep(roots);
 			} else {
-				roots.add(nNode.rank(), nNode);
-				n++;
+				roots.add(nNode);
 				result.logIntermediateStep(roots);
+				merge(roots.get(nNode.rank()), roots.get(roots.size() - 1), nNode.rank(), result);
+				result.addToIntermediateStep(roots);
 			}
 		}
 	}
@@ -52,18 +50,20 @@ public class BinomialHeap {
 		}
 	}
 
-	public void merge(ArrayList<BinomialTreeNode> tree, int rank, Result result) {
-		BinomialTreeNode mergedNode = BinomialTreeNode.merge(roots.get(rank), tree.get(rank));
+	public void merge(BinomialTreeNode a, BinomialTreeNode b, int rank, Result result) {
+		BinomialTreeNode mergedNode = BinomialTreeNode.merge(a, b);
 		roots.remove(rank);
+		roots.remove(roots.size() - 1);
 		result.addToIntermediateStep(roots);
-		if (roots.get(mergedNode.rank()) != null) {
-			ArrayList<BinomialTreeNode> temp = new ArrayList<>();
-			temp.add(mergedNode.rank(), mergedNode);
-			merge(temp, mergedNode.rank(), result);
-		} else {
-			roots.add(mergedNode.rank(), mergedNode);
+		if (roots.get(mergedNode.rank()) == null) {
+			roots.add(mergedNode);
 			result.addToIntermediateStep(roots);
+		} else {
+			roots.add(mergedNode);
+			result.addToIntermediateStep(roots);
+			merge(roots.get(mergedNode.rank()), roots.get(roots.size() - 1), mergedNode.rank(), result);
 		}
+		result.addToIntermediateStep(roots);
 	}
 
 	public static int getBit(int element, int binPlace) {
