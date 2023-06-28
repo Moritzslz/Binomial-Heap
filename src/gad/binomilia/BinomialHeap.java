@@ -98,7 +98,7 @@ public class BinomialHeap {
 			roots.remove(a);
 		}
 
-		//result.addToIntermediateStep(roots);
+		result.addToIntermediateStep(roots);
 
 		for (int i = 0; i < roots.size(); i++) {
 			if (roots.get(i).rank() == nRank && roots.get(i) != mergedNode) {
