@@ -54,21 +54,27 @@ public class BinomialHeap {
 	public int deleteMin(Result result) {
 		if (!roots.isEmpty()) {
 			result.startDeleteMin(roots);
-			BinomialTreeNode min = roots.get(min());
+			BinomialTreeNode min = roots.get(minPointer);
 			roots.remove(min);
 			n--;
 			result.logIntermediateStep(roots);
-			for (BinomialTreeNode child : min.getChildren()) {
-				roots.add(child);
-				result.addToIntermediateStep(roots);
-				for (int i = 0; i < roots.size(); i++) {
-					BinomialTreeNode node = roots.get(i);
-					if (node.rank() == child.rank()) {
-						merge(node, child, result);
-						break;
+			if (roots.size() == 0) {
+				for (BinomialTreeNode child : min.getChildren()) {
+					roots.add(child);
+					result.addToIntermediateStep(roots);
+				}
+			} else {
+				for (BinomialTreeNode child : min.getChildren()) {
+					roots.add(child);
+					result.addToIntermediateStep(roots);
+					for (int i = 0; i < roots.size(); i++) {
+						BinomialTreeNode node = roots.get(i);
+						if (node.rank() == child.rank()) {
+							merge(node, child, result);
+							break;
+						}
 					}
 				}
-
 			}
 			return min.min();
 		} else {
@@ -151,6 +157,10 @@ public class BinomialHeap {
 			System.out.println(binomialHeap.roots.get(i).min());
 		}
 		binomialHeap.insert(7, studentResult);
+		for (int i = 0; i < binomialHeap.roots.size(); i++) {
+			System.out.println(binomialHeap.roots.get(i).min());
+		}
+		binomialHeap.deleteMin(studentResult);
 		for (int i = 0; i < binomialHeap.roots.size(); i++) {
 			System.out.println(binomialHeap.roots.get(i).min());
 		}
