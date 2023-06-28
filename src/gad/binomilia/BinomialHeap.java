@@ -54,37 +54,50 @@ public class BinomialHeap {
 	public int deleteMin(Result result) {
 		if (!roots.isEmpty()) {
 			result.startDeleteMin(roots);
-			return 0;
+			BinomialTreeNode min = roots.get(min());
+			roots.remove(min);
+			n--;
+			result.logIntermediateStep(roots);
+			for (BinomialTreeNode child : min.getChildren()) {
+				roots.add(child);
+				result.addToIntermediateStep(roots);
+				for (int i = 0; i < roots.size(); i++) {
+					BinomialTreeNode node = roots.get(i);
+					if (node.rank() == child.rank()) {
+						merge(node, child, result);
+						break;
+					}
+				}
+
+			}
+			return min.min();
 		} else {
 			throw new NoSuchElementException();
 		}
 	}
 
 	public void merge(BinomialTreeNode a, BinomialTreeNode b, Result result) {
-		BinomialTreeNode mergedNode = BinomialTreeNode.merge(a, b);
-		roots.remove(a);
-		roots.remove(b);
-		n -= a.getChildren().size() + 1;
-		n -= b.getChildren().size() + 1;
-		n++;
-		if (getBit(n, mergedNode.rank()) == 1) {
-			// An element with the rank of the newly merged node is already existing
-			// => Recursively merge the new node with the existing one until all heap
-			// characteristics are met again.
-			roots.add(mergedNode);
-			n += mergedNode.getChildren().size() + 1;
-			result.logIntermediateStep(roots);
-			for (int i = 0; i < roots.size(); i++) {
-				BinomialTreeNode node = roots.get(i);
-				if (node.rank() == mergedNode.rank()) {
-					merge(node, mergedNode, result);
-					break;
-				}
+		int nRank = -1;
+		BinomialTreeNode mergedNode;
+		if (a.min() < b.min()) {
+			a = BinomialTreeNode.merge(a, b);
+			nRank = a.rank();
+			mergedNode = a;
+			roots.remove(b);
+		} else {
+			b = BinomialTreeNode.merge(a, b);
+			nRank = b.rank();
+			mergedNode = b;
+			roots.remove(a);
+		}
+
+		result.addToIntermediateStep(roots);
+
+		for (int i = 0; i < roots.size(); i++) {
+			if (roots.get(i).rank() == nRank && roots.get(i) != mergedNode) {
+				merge(roots.get(i), mergedNode, result);
 			}
 		}
-		roots.add(mergedNode);
-		n += mergedNode.getChildren().size() + 1;
-		result.logIntermediateStep(roots);
 
 		// Reset minPointer
 		int min = roots.get(0).min();
@@ -98,10 +111,6 @@ public class BinomialHeap {
 
 	public static int getBit(int element, int binPlace) {
 		return (element >> binPlace) & 1;
-	}
-
-	public int getN() {
-		return n;
 	}
 
 	public static String dot(BinomialTreeNode[] trees) {
@@ -138,6 +147,10 @@ public class BinomialHeap {
 			System.out.println(binomialHeap.roots.get(i).min());
 		}
 		binomialHeap.insert(6, studentResult);
+		for (int i = 0; i < binomialHeap.roots.size(); i++) {
+			System.out.println(binomialHeap.roots.get(i).min());
+		}
+		binomialHeap.insert(7, studentResult);
 		for (int i = 0; i < binomialHeap.roots.size(); i++) {
 			System.out.println(binomialHeap.roots.get(i).min());
 		}
