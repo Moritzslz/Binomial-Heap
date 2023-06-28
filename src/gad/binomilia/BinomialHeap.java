@@ -4,7 +4,7 @@ import java.util.*;
 
 public class BinomialHeap {
 
-	private ArrayList<BinomialTreeNode> roots;
+	private List<BinomialTreeNode> roots;
 	private int minPointer;
 	private int n;
 
@@ -24,19 +24,29 @@ public class BinomialHeap {
 		result.startInsert(key, roots);
 		BinomialTreeNode nNode = new BinomialTreeNode(key);
 		if (roots.isEmpty()) {
-			roots.add(nNode.rank(), nNode);
+			roots.add(nNode);
 			n = 1;
 			minPointer = 0;
 			result.logIntermediateStep(roots);
 		} else {
-			if (roots.get(nNode.rank()) == null) {
-				roots.add(nNode.rank(), nNode);
-				result.logIntermediateStep(roots);
+			if (getBit(n, nNode.rank()) == 1) {
+				// An element with the rank 0 is already existing
+				roots.add(nNode);
+				n++;
+				result.logIntermediateStep(nNode);
+				for (int i = 0; i < roots.size(); i++) {
+					BinomialTreeNode node = roots.get(i);
+					if (node.rank() == nNode.rank()) {
+						merge(node, nNode, result);
+						break;
+					}
+				}
 			} else {
 				roots.add(nNode);
-				result.logIntermediateStep(roots);
-				merge(roots.get(nNode.rank()), roots.get(roots.size() - 1), nNode.rank(), result);
-				result.addToIntermediateStep(roots);
+				n++;
+				if (nNode.min() < roots.get(minPointer).min()) {
+					minPointer = roots.size() - 1;
+				}
 			}
 		}
 	}
@@ -50,20 +60,40 @@ public class BinomialHeap {
 		}
 	}
 
-	public void merge(BinomialTreeNode a, BinomialTreeNode b, int rank, Result result) {
+	public void merge(BinomialTreeNode a, BinomialTreeNode b, Result result) {
 		BinomialTreeNode mergedNode = BinomialTreeNode.merge(a, b);
-		roots.remove(rank);
-		roots.remove(roots.size() - 1);
-		result.addToIntermediateStep(roots);
-		if (roots.get(mergedNode.rank()) == null) {
+		roots.remove(a);
+		roots.remove(b);
+		n -= a.getChildren().size() + 1;
+		n -= b.getChildren().size() + 1;
+		n++;
+		if (getBit(n, mergedNode.rank()) == 1) {
+			// An element with the rank of the newly merged node is already existing
+			// => Recursively merge the new node with the existing one until all heap
+			// characteristics are met again.
 			roots.add(mergedNode);
-			result.addToIntermediateStep(roots);
-		} else {
-			roots.add(mergedNode);
-			result.addToIntermediateStep(roots);
-			merge(roots.get(mergedNode.rank()), roots.get(roots.size() - 1), mergedNode.rank(), result);
+			n += mergedNode.getChildren().size() + 1;
+			result.logIntermediateStep(roots);
+			for (int i = 0; i < roots.size(); i++) {
+				BinomialTreeNode node = roots.get(i);
+				if (node.rank() == mergedNode.rank()) {
+					merge(node, mergedNode, result);
+					break;
+				}
+			}
 		}
-		result.addToIntermediateStep(roots);
+		roots.add(mergedNode);
+		n += mergedNode.getChildren().size() + 1;
+		result.logIntermediateStep(roots);
+
+		// Reset minPointer
+		int min = roots.get(0).min();
+		for (int i = 1; i < roots.size(); i++) {
+			if (roots.get(i).min() < min) {
+				min = roots.get(i).min();
+				minPointer = i;
+			}
+		}
 	}
 
 	public static int getBit(int element, int binPlace) {
@@ -94,5 +124,22 @@ public class BinomialHeap {
 		}
 		sb.append("}");
 		return sb.toString();
+	}
+
+	public static void main(String[] args) {
+		BinomialHeap binomialHeap = new BinomialHeap();
+		StudentResult studentResult = new StudentResult();
+		binomialHeap.insert(4, studentResult);
+		for (int i = 0; i < binomialHeap.roots.size(); i++) {
+			System.out.println(binomialHeap.roots.get(i).min());
+		}
+		binomialHeap.insert(5, studentResult);
+		for (int i = 0; i < binomialHeap.roots.size(); i++) {
+			System.out.println(binomialHeap.roots.get(i).min());
+		}
+		binomialHeap.insert(6, studentResult);
+		for (int i = 0; i < binomialHeap.roots.size(); i++) {
+			System.out.println(binomialHeap.roots.get(i).min());
+		}
 	}
 }
