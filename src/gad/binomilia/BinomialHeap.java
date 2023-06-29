@@ -68,14 +68,16 @@ public class BinomialHeap {
 			roots.remove(min);
 			n--;
 			result.logIntermediateStep(roots);
+			ArrayList<BinomialTreeNode> children = new ArrayList<>();
+			for (BinomialTreeNode child : min.getChildren()) {
+				children.add(child);
+			}
 			if (roots.size() == 0) {
-				for (BinomialTreeNode child : min.getChildren()) {
+				for (BinomialTreeNode child : children) {
 					roots.add(child);
 					result.addToIntermediateStep(roots);
 				}
 			} else {
-				//TODO
-				ArrayList<BinomialTreeNode> children = min.getChildren();
 				for (BinomialTreeNode child : children) {
 					roots.add(child);
 					result.addToIntermediateStep(roots);
