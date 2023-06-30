@@ -107,7 +107,7 @@ public class BinomialHeap {
 				// Remove and log the old nodes
 				roots.remove(currentNode);
 				roots.remove(node);
-				result.addToIntermediateStep(roots); // TODO this logging may be wrong
+				//result.addToIntermediateStep(roots); // TODO this logging may be wrong
 
 				// Add the mergedNode, recursively merge the mergedNode
 				// if another node with the same rank is present
@@ -125,8 +125,8 @@ public class BinomialHeap {
 		}
 	}
 
-	public boolean hasRank(int n, int rank) {
-		return ((n >> rank) & 1) == 1;
+	public boolean hasRank(int totalNumberOfNodes, int rank) {
+		return ((totalNumberOfNodes >> rank) & 1) == 1;
 	}
 
 	public void resetMinPointer() {
@@ -178,11 +178,8 @@ public class BinomialHeap {
 			binomialHeap.insert(random.nextInt(-1000, 1000), studentResult);
 		}
 		System.out.println(dot(binomialHeap.roots));
-		if (!binomialHeap.roots.isEmpty()) {
+		for (int i = 0; i < 99; i++) {
 			binomialHeap.deleteMin(studentResult);
-		} else {
-			// Handle the case when the heap is empty
-			System.out.println("EMPTY");
 		}
 		System.out.println(dot(binomialHeap.roots));
 	}
