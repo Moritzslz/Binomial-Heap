@@ -10,6 +10,8 @@ public class BinomialHeap {
 
 	public BinomialHeap() {
 		this.roots = new ArrayList<>();
+		this.minPointer = -1;
+		this.n = 0;
 	}
 
 	public int min() {
@@ -23,121 +25,118 @@ public class BinomialHeap {
 	public void insert(int key, Result result) {
 		result.startInsert(key, roots);
 		BinomialTreeNode nNode = new BinomialTreeNode(key);
+
+		// Case heap is empty
 		if (roots.isEmpty()) {
 			roots.add(nNode);
-			n = 1;
-			minPointer = 0;
 			result.logIntermediateStep(roots);
+			minPointer = 0;
 		} else {
-			if (getBit(n, nNode.rank()) == 1) {
-				// An element with the rank 0 is already existing
+			// Reset the minPointer if necessary
+			if (nNode.min() < roots.get(minPointer).min()) {
+				minPointer = roots.size();
+			}
+
+			// Check if a node of rank 0 is currently existing
+			if (hasRank(this.n, 0)) {
+				// Add the new node to the heap and merge it with
+				// the existing element of the same rank
 				roots.add(nNode);
-				n++;
 				result.logIntermediateStep(roots);
-				if (minPointer < roots.size()) {
-					if (nNode.min() < roots.get(minPointer).min()) {
-						minPointer = roots.size() - 1;
-					}
-				}
-				for (int i = 0; i < roots.size(); i++) {
-					BinomialTreeNode node = roots.get(i);
-					if (node.rank() == nNode.rank()) {
-						merge(node, nNode, result);
-						break;
-					}
-				}
+				merge(nNode, result);
 			} else {
 				roots.add(nNode);
-				n++;
 				result.logIntermediateStep(roots);
-				if (minPointer < roots.size()) {
-					if (nNode.min() < roots.get(minPointer).min()) {
-						minPointer = roots.size() - 1;
-					}
-				} else {
-					resetMinPointer();
-				}
 			}
 		}
+
+		// Increase the number of all nodes by 1
+		// The Increase has to happen at the end otherwise
+		// the hasRank method would return wrong values when
+		// checking whether a certain rank already is present
+		n++;
 	}
 
 	public int deleteMin(Result result) {
 		if (!roots.isEmpty()) {
 			result.startDeleteMin(roots);
-			BinomialTreeNode min = roots.get(minPointer);
-			roots.remove(min);
-			n--;
+			BinomialTreeNode minNode = roots.get(min());
+			ArrayList<BinomialTreeNode> children = minNode.getChildren();
+
+			// Remove the minimum node
+			roots.remove(minNode);
 			result.logIntermediateStep(roots);
-			ArrayList<BinomialTreeNode> children = new ArrayList<>();
-			for (BinomialTreeNode child : min.getChildren()) {
-				children.add(child);
-			}
-			if (roots.size() == 0) {
-				for (BinomialTreeNode child : children) {
+
+			// Add its children to the heap
+			// n is not changed since each child element has been part of n before
+			for (BinomialTreeNode child :children) {
+				if (hasRank(this.n, child.rank())) {
+					// Add the child to the heap and merge it with
+					// the existing element of the same rank
+					roots.add(child);
+					result.addToIntermediateStep(roots);
+					merge(child, result);
+				} else {
 					roots.add(child);
 					result.addToIntermediateStep(roots);
 				}
-			} else {
-				for (BinomialTreeNode child : children) {
-					roots.add(child);
-					result.addToIntermediateStep(roots);
-					for (int i = 0; i < roots.size(); i++) {
-						BinomialTreeNode node = roots.get(i);
-						if (node.rank() == child.rank()) {
-							merge(node, child, result);
-							break;
-						}
-					}
-				}
 			}
+
+			// Decrease the number of all nodes by 1
+			// The Decrease has to happen at the end otherwise
+			// the hasRank method would return wrong values when
+			// checking whether a certain rank already is present
+			n--;
+
 			resetMinPointer();
-			return min.min();
+			return minNode.min();
 		} else {
 			throw new NoSuchElementException();
 		}
 	}
 
-	public void merge(BinomialTreeNode a, BinomialTreeNode b, Result result) {
-		int nRank = -1;
-		BinomialTreeNode mergedNode;
-		if (a.min() < b.min()) {
-			a = BinomialTreeNode.merge(a, b);
-			nRank = a.rank();
-			mergedNode = a;
-			roots.remove(b);
-		} else {
-			b = BinomialTreeNode.merge(a, b);
-			nRank = b.rank();
-			mergedNode = b;
-			roots.remove(a);
-		}
-
-		result.addToIntermediateStep(roots);
-
+	public void merge(BinomialTreeNode node, Result result) {
+		// Find the existing node with the same rank as the new one
 		for (int i = 0; i < roots.size(); i++) {
-			if (roots.get(i).rank() == nRank && roots.get(i) != mergedNode) {
-				merge(roots.get(i), mergedNode, result);
+			BinomialTreeNode currentNode = roots.get(i);
+			if (currentNode.rank() == node.rank() && currentNode != node) {
+
+				// Merge the two nodes using the merge method in BinomialTreeNode
+				BinomialTreeNode mergedNode = BinomialTreeNode.merge(currentNode, node);
+
+				// Remove and log the old nodes
+				roots.remove(currentNode);
+				roots.remove(node);
+				result.addToIntermediateStep(roots); // TODO this logging may be wrong
+
+				// Add the mergedNode, recursively merge the mergedNode
+				// if another node with the same rank is present
+				if (hasRank(this.n, mergedNode.rank())) {
+					roots.add(mergedNode);
+					result.addToIntermediateStep(roots);
+					merge(mergedNode, result);
+				} else {
+					roots.add(mergedNode);
+					result.addToIntermediateStep(roots);
+				}
+				resetMinPointer();
+				return;
 			}
 		}
-		resetMinPointer();
 	}
 
-	public static int getBit(int element, int binPlace) {
-		return (element >> binPlace) & 1;
+	public boolean hasRank(int n, int rank) {
+		return ((n >> rank) & 1) == 1;
 	}
 
 	public void resetMinPointer() {
-		if (roots.size() > 0) {
-			int min = roots.get(0).min();
-			minPointer = 0;
-			for (int i = 1; i < roots.size(); i++) {
-				if (roots.get(i).min() < min) {
-					min = roots.get(i).min();
-					minPointer = i;
-				}
+		int tempMinVlaue = roots.get(0).min();
+		this.minPointer = 0;
+		for (int i = 0; i < roots.size(); i++) {
+			if (tempMinVlaue > roots.get(i).min()) {
+				tempMinVlaue = roots.get(i).min();
+				this.minPointer = i;
 			}
-		} else {
-			minPointer = 0;
 		}
 	}
 
@@ -165,6 +164,14 @@ public class BinomialHeap {
 
 	public static void main(String[] args) {
 		BinomialHeap binomialHeap = new BinomialHeap();
+
+		/*// Test hasRank
+		int n = 11; // Number of nodes in the binomial heap
+		int rank = 0; // Desired rank to check
+		boolean hasRank = binomialHeap.hasRank(n, rank);
+		System.out.println(hasRank); // Output: true for n element N = {0, 1, 3}*/
+
+		// Test heap
 		StudentResult studentResult = new StudentResult();
 		Random random = new Random();
 		for (int i = 0; i < 100; i++) {

@@ -43,11 +43,6 @@ public class BinomialTreeNode {
 		return children;
 	}
 
-	public int getNumberOfChildren() {
-		int numberOfChildren = (int) Math.pow(2, rank()) - 1;
-		return numberOfChildren;
-	}
-
 	public int dotNode(StringBuilder sb, int idx) {
 		sb.append(String.format("\t\t%d [label=\"%d\"];%n", idx, element));
 		int rank = rank();
