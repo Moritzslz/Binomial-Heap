@@ -171,8 +171,11 @@ public class BinomialHeap {
 			binomialHeap.insert(random.nextInt(-1000, 1000), studentResult);
 		}
 		System.out.println(dot(binomialHeap.roots));
-		for (int i = 0; i < 99; i++) {
+		if (!binomialHeap.roots.isEmpty()) {
 			binomialHeap.deleteMin(studentResult);
+		} else {
+			// Handle the case when the heap is empty
+			System.out.println("EMPTY");
 		}
 		System.out.println(dot(binomialHeap.roots));
 	}
