@@ -60,7 +60,7 @@ public class BinomialHeap {
 	public int deleteMin(Result result) {
 		if (!roots.isEmpty()) {
 			result.startDeleteMin(roots);
-			BinomialTreeNode minNode = roots.get(min());
+			BinomialTreeNode minNode = roots.get(minPointer);
 			ArrayList<BinomialTreeNode> children = minNode.getChildren();
 
 			// Remove the minimum node
