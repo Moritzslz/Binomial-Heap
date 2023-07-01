@@ -43,7 +43,7 @@ public class BinomialHeap {
 				// the existing element of the same rank
 				roots.add(nNode);
 				result.logIntermediateStep(roots);
-				merge(nNode, result);
+				merge(result);
 			} else {
 				roots.add(nNode);
 				result.logIntermediateStep(roots);
@@ -73,12 +73,12 @@ public class BinomialHeap {
 					// Add the child to the heap and merge it with
 					// the existing element of the same rank
 					roots.add(child);
-					merge(child, result);
 				} else {
 					roots.add(child);
 				}
 			}
 			result.addToIntermediateStep(roots);
+			merge(result);
 			// Decrease the number of all nodes by 1
 			// The Decrease has to happen at the end otherwise
 			// the hasRank method would return wrong values when
@@ -94,33 +94,42 @@ public class BinomialHeap {
 		}
 	}
 
-	public void merge(BinomialTreeNode node, Result result) {
-		// Find the existing node with the same rank as the new one
-		for (int i = 0; i < roots.size(); i++) {
-			BinomialTreeNode currentNode = roots.get(i);
-			if (currentNode.rank() == node.rank() && currentNode != node) {
+	public void merge(Result result) {
+		// Sort the roots by rank
+		roots.sort(Comparator.comparing(BinomialTreeNode::rank));
+		// Find two nodes with the same rank as the new one
+		for (int i = 1; i < roots.size(); i++) {
+			BinomialTreeNode root1 = roots.get(i-1);
+			BinomialTreeNode root2 = roots.get(i);
 
+			if (root1.rank() == root2.rank()) {
 				// Merge the two nodes using the merge method in BinomialTreeNode
-				BinomialTreeNode mergedNode = BinomialTreeNode.merge(currentNode, node);
+				BinomialTreeNode mergedNode = BinomialTreeNode.merge(root1, root2);
 
 				// Remove the old nodes
-				roots.remove(currentNode);
-				roots.remove(node);
-
+				roots.remove(root1);
+				roots.remove(root2);
+				roots.add(mergedNode);
+				result.addToIntermediateStep(roots);
+				merge(result);
+/*
 				// Add the mergedNode, recursively merge the mergedNode
 				// if another node with the same rank is present
 				if (hasRank(this.n, mergedNode.rank())) {
 					roots.add(mergedNode);
-					//result.addToIntermediateStep(roots);
-					merge(mergedNode, result);
+					result.addToIntermediateStep(roots);
+					merge(result);
 				} else {
 					roots.add(mergedNode);
-					//result.addToIntermediateStep(roots);
+					result.addToIntermediateStep(roots);
 				}
 
 				resetMinPointer();
-				return;
+				return;*/
 			}
+		}
+		if (!roots.isEmpty()) {
+			resetMinPointer();
 		}
 	}
 
@@ -174,7 +183,7 @@ public class BinomialHeap {
 		StudentResult studentResult = new StudentResult();
 		Random random = new Random();
 
-		/*//Test 1
+		//Test 1
 		for (int i = 0; i < 2500; i++) {
 			binomialHeap.insert(random.nextInt(-1000, 1000), studentResult);
 		}
@@ -182,9 +191,9 @@ public class BinomialHeap {
 		for (int i = 0; i < 2500; i++) {
 			binomialHeap.deleteMin(studentResult);
 		}
-		System.out.println(dot(binomialHeap.roots));*/
+		System.out.println(dot(binomialHeap.roots));
 
-		//Test 2
+		/*//Test 2
 		for (int i = 0; i < 20; i++) {
 			binomialHeap.insert(random.nextInt(-1000, 1000), studentResult);
 			if (i % 5 == 0) {
@@ -192,6 +201,6 @@ public class BinomialHeap {
 				binomialHeap.deleteMin(studentResult);
 				System.out.println(dot(binomialHeap.roots));
 			}
-		}
+		}*/
 	}
 }
