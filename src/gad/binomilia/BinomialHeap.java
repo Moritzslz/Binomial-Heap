@@ -108,10 +108,8 @@ public class BinomialHeap {
 					roots.add(mergedNode);
 					result.logIntermediateStep(roots);
 				}
-
-				resetMinPointer();
-				return;
 			}
+			resetMinPointer();
 		}
 	}
 
