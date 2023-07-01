@@ -42,13 +42,14 @@ public class BinomialHeap {
 				// Add the new node to the heap and merge it with
 				// the existing element of the same rank
 				roots.add(nNode);
-				merge(nNode, result);
 				result.logIntermediateStep(roots);
+				merge(nNode, result);
 			} else {
 				roots.add(nNode);
 				result.logIntermediateStep(roots);
 			}
 		}
+		mergeByLoop(result);
 
 		// Increase the number of all nodes by 1
 		// The Increase has to happen at the end otherwise
@@ -79,8 +80,7 @@ public class BinomialHeap {
 					roots.add(child);
 				}
 			}
-			mergeByLoop();
-			result.addToIntermediateStep(roots);
+			mergeByLoop(result);
 
 			// Decrease the number of all nodes by 1
 			// The Decrease has to happen at the end otherwise
@@ -125,7 +125,7 @@ public class BinomialHeap {
 		}
 	}
 
-	public void mergeByLoop() {
+	public void mergeByLoop(Result result) {
 		roots.sort(Comparator.comparing(BinomialTreeNode::rank));
 		for (int i = 1; i < roots.size(); i++) {
 			if (roots.get(i - 1).rank() == roots.get(i).rank()) {
@@ -139,11 +139,14 @@ public class BinomialHeap {
 				roots.remove(root1);
 				roots.remove(root2);
 				roots.add(mergedNode);
+				result.addToIntermediateStep(roots);
 
 				if (!roots.isEmpty()) {
 					resetMinPointer();
 				}
 				return;
+			} else {
+				result.addToIntermediateStep(roots);
 			}
 		}
 	}
