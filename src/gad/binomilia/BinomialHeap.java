@@ -21,7 +21,6 @@ public class BinomialHeap {
 	}
 
 	public void insert(int key, Result result) {
-		roots.sort(Comparator.comparing(BinomialTreeNode::rank));
 		result.startInsert(key, roots);
 		BinomialTreeNode nNode = new BinomialTreeNode(key);
 
@@ -75,6 +74,7 @@ public class BinomialHeap {
 
 	public void merge(Result result) {
 		// Loop through roots and merge all with same rank
+		roots.sort(Comparator.comparing(BinomialTreeNode::rank));
 		boolean mergeAgain = true;
 		while (mergeAgain) {
 			for (int i = 1; i < roots.size(); i++) {
@@ -97,6 +97,7 @@ public class BinomialHeap {
 	}
 
 	public boolean hasDoubleRank() {
+		roots.sort(Comparator.comparing(BinomialTreeNode::rank));
 		for (int i = 1; i < roots.size(); i++) {
 			BinomialTreeNode root1 = roots.get(i - 1);
 			BinomialTreeNode root2 = roots.get(i);
