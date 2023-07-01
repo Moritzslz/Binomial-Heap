@@ -102,11 +102,11 @@ public class BinomialHeap {
 				// if another node with the same rank is present
 				if (hasRank(mergedNode.rank())) {
 					roots.add(mergedNode);
-					result.addToIntermediateStep(roots);
+					result.logIntermediateStep(roots);
 					merge(mergedNode, result);
 				} else {
 					roots.add(mergedNode);
-					result.addToIntermediateStep(roots);
+					result.logIntermediateStep(roots);
 				}
 
 				resetMinPointer();
