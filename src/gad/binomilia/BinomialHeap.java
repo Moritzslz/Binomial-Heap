@@ -112,6 +112,7 @@ public class BinomialHeap {
 				return;
 			}
 		}
+		result.addToIntermediateStep(roots);
 	}
 
 	public boolean hasRank(int rank) {
