@@ -84,6 +84,7 @@ public class BinomialHeap {
 					BinomialTreeNode mergedNode = BinomialTreeNode.merge(root1, root2);
 					roots.remove(root1);
 					roots.set(i - 1, mergedNode);
+					i--;
 					//roots.sort(Comparator.comparing(BinomialTreeNode::rank));
 					result.logIntermediateStep(roots);
 				}
