@@ -72,7 +72,7 @@ public class BinomialHeap {
 				}
 			}
 			result.addToIntermediateStep(roots);
-			//merge(result);
+			merge(result);
 
 			if (!roots.isEmpty()) {
 				resetMinPointer();
@@ -86,6 +86,7 @@ public class BinomialHeap {
 	public void merge(Result result) {
 		// Sort rooks by rank
 		roots.sort(Comparator.comparing(BinomialTreeNode::rank));
+		boolean mergeAgain = false;
 		// Find the existing node with the same rank as the new one
 		for (int i = 1; i < roots.size(); i++) {
 			BinomialTreeNode root1 = roots.get(i - 1);
@@ -104,7 +105,6 @@ public class BinomialHeap {
 				if (hasRank(mergedNode.rank())) {
 					roots.add(mergedNode);
 					result.logIntermediateStep(roots);
-					merge(result);
 				} else {
 					roots.add(mergedNode);
 					result.logIntermediateStep(roots);
