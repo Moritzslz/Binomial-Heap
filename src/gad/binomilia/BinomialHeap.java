@@ -42,8 +42,8 @@ public class BinomialHeap {
 				// Add the new node to the heap and merge it with
 				// the existing element of the same rank
 				roots.add(nNode);
-				result.logIntermediateStep(roots);
 				merge(nNode, result);
+				result.logIntermediateStep(roots);
 			} else {
 				roots.add(nNode);
 				result.logIntermediateStep(roots);
@@ -74,8 +74,8 @@ public class BinomialHeap {
 					// Add the child to the heap and merge it with
 					// the existing element of the same rank
 					roots.add(child);
-					result.addToIntermediateStep(roots);
 					merge(child, result);
+					result.addToIntermediateStep(roots);
 				} else {
 					roots.add(child);
 					result.addToIntermediateStep(roots);
@@ -114,11 +114,9 @@ public class BinomialHeap {
 				// if another node with the same rank is present
 				if (hasRank(this.n, mergedNode.rank())) {
 					roots.add(mergedNode);
-					result.addToIntermediateStep(roots);
 					merge(mergedNode, result);
 				} else {
 					roots.add(mergedNode);
-					result.addToIntermediateStep(roots);
 				}
 				resetMinPointer();
 				return;
