@@ -66,15 +66,14 @@ public class BinomialHeap {
 			for (BinomialTreeNode child : children) {
 				if (hasRank(child.rank())) {
 					roots.add(child);
-					merge(child, result);
 				} else {
 					roots.add(child);
 				}
 			}
 			result.addToIntermediateStep(roots);
-			/*for (BinomialTreeNode child : toBeMerged) {
+			for (BinomialTreeNode child : toBeMerged) {
 				merge(child, result);
-			}*/
+			}
 
 			if (!roots.isEmpty()) {
 				resetMinPointer();
