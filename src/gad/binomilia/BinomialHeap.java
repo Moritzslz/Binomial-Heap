@@ -83,10 +83,8 @@ public class BinomialHeap {
 				if (root1.rank() == root2.rank()) {
 					BinomialTreeNode mergedNode = BinomialTreeNode.merge(root1, root2);
 					roots.remove(root1);
-					roots.remove(root2);
-					roots.add(mergedNode);
-					// Sort rooks by rank
-					roots.sort(Comparator.comparing(BinomialTreeNode::rank));
+					roots.set(i - 1, mergedNode);
+					//roots.sort(Comparator.comparing(BinomialTreeNode::rank));
 					result.logIntermediateStep(roots);
 				}
 			}
