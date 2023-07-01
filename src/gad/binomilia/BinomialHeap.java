@@ -102,7 +102,7 @@ public class BinomialHeap {
 				// if another node with the same rank is present
 				if (hasRank(mergedNode.rank())) {
 					roots.add(mergedNode);
-					result.logIntermediateStep(roots);
+					//result.logIntermediateStep(roots);
 					merge(result);
 				} else {
 					roots.add(mergedNode);
