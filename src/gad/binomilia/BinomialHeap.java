@@ -38,12 +38,12 @@ public class BinomialHeap {
 			}
 
 			// Check if a node of rank 0 is currently existing
-			if (hasRank(this.n, 0)) {
+			if (hasRank(0)) {
 				// Add the new node to the heap and merge it with
 				// the existing element of the same rank
 				roots.add(nNode);
 				result.logIntermediateStep(roots);
-				merge(result);
+				merge(nNode, result);
 			} else {
 				roots.add(nNode);
 				result.logIntermediateStep(roots);
@@ -66,19 +66,17 @@ public class BinomialHeap {
 			roots.remove(minNode);
 			result.logIntermediateStep(roots);
 
-			// Add its children to the heap
+			// Add its children to the heap and merge them afterwards
 			// n is not changed since each child element has been part of n before
 			for (BinomialTreeNode child : children) {
-				if (hasRank(this.n, child.rank())) {
-					// Add the child to the heap and merge it with
-					// the existing element of the same rank
+				if (hasRank(child.rank())) {
 					roots.add(child);
+					merge(child, result);
 				} else {
 					roots.add(child);
 				}
 			}
 			result.addToIntermediateStep(roots);
-			merge(result);
 			// Decrease the number of all nodes by 1
 			// The Decrease has to happen at the end otherwise
 			// the hasRank method would return wrong values when
@@ -94,47 +92,45 @@ public class BinomialHeap {
 		}
 	}
 
-	public void merge(Result result) {
-		// Sort the roots by rank
-		roots.sort(Comparator.comparing(BinomialTreeNode::rank));
-		// Find two nodes with the same rank as the new one
-		for (int i = 1; i < roots.size(); i++) {
-			BinomialTreeNode root1 = roots.get(i-1);
-			BinomialTreeNode root2 = roots.get(i);
+	public void merge(BinomialTreeNode node, Result result) {
+		// Find the existing node with the same rank as the new one
+		for (int i = 0; i < roots.size(); i++) {
+			BinomialTreeNode currentNode = roots.get(i);
+			if (currentNode.rank() == node.rank() && currentNode != node) {
 
-			if (root1.rank() == root2.rank()) {
 				// Merge the two nodes using the merge method in BinomialTreeNode
-				BinomialTreeNode mergedNode = BinomialTreeNode.merge(root1, root2);
+				BinomialTreeNode mergedNode = BinomialTreeNode.merge(currentNode, node);
 
 				// Remove the old nodes
-				roots.remove(root1);
-				roots.remove(root2);
-				roots.add(mergedNode);
-				result.addToIntermediateStep(roots);
-				merge(result);
-/*
+				roots.remove(currentNode);
+				roots.remove(node);
+
 				// Add the mergedNode, recursively merge the mergedNode
 				// if another node with the same rank is present
-				if (hasRank(this.n, mergedNode.rank())) {
+				if (hasRank(mergedNode.rank())) {
 					roots.add(mergedNode);
 					result.addToIntermediateStep(roots);
-					merge(result);
+					merge(mergedNode, result);
 				} else {
 					roots.add(mergedNode);
 					result.addToIntermediateStep(roots);
 				}
 
 				resetMinPointer();
-				return;*/
+				return;
 			}
-		}
-		if (!roots.isEmpty()) {
-			resetMinPointer();
 		}
 	}
 
-	public boolean hasRank(int totalNumberOfNodes, int rank) {
-		return ((totalNumberOfNodes >> rank) & 1) == 1;
+	public boolean hasRank(int rank) {
+		roots.sort(Comparator.comparing(BinomialTreeNode::rank));
+		for (BinomialTreeNode root : roots) {
+			if (root.rank() == rank) {
+				return true;
+			}
+		}
+		return false;
+		//return ((totalNumberOfNodes >> rank) & 1) == 1;
 	}
 
 	public void resetMinPointer() {
