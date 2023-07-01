@@ -115,6 +115,7 @@ public class BinomialHeap {
 				if (hasRank(this.n, mergedNode.rank())) {
 					roots.add(mergedNode);
 					merge(mergedNode, result);
+					result.logIntermediateStep(roots);
 				} else {
 					roots.add(mergedNode);
 				}
