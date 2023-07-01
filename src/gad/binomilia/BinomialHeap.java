@@ -6,12 +6,10 @@ public class BinomialHeap {
 
 	private List<BinomialTreeNode> roots;
 	private int minPointer;
-	private int n;
 
 	public BinomialHeap() {
 		this.roots = new ArrayList<>();
 		this.minPointer = -1;
-		this.n = 0;
 	}
 
 	public int min() {
@@ -48,12 +46,8 @@ public class BinomialHeap {
 				roots.add(nNode);
 				result.logIntermediateStep(roots);
 			}
+			resetMinPointer();
 		}
-		// Increase the number of all nodes by 1
-		// The Increase has to happen at the end otherwise
-		// the hasRank method would return wrong values when
-		// checking whether a certain rank already is present
-		n++;
 	}
 
 	public int deleteMin(Result result) {
@@ -61,6 +55,7 @@ public class BinomialHeap {
 			result.startDeleteMin(roots);
 			BinomialTreeNode minNode = roots.get(minPointer);
 			ArrayList<BinomialTreeNode> children = minNode.getChildren();
+			ArrayList<BinomialTreeNode> toBeMerged = new ArrayList<>();
 
 			// Remove the minimum node
 			roots.remove(minNode);
@@ -71,17 +66,15 @@ public class BinomialHeap {
 			for (BinomialTreeNode child : children) {
 				if (hasRank(child.rank())) {
 					roots.add(child);
-					merge(child, result);
+					toBeMerged.add(child);
 				} else {
 					roots.add(child);
 				}
 			}
 			result.addToIntermediateStep(roots);
-			// Decrease the number of all nodes by 1
-			// The Decrease has to happen at the end otherwise
-			// the hasRank method would return wrong values when
-			// checking whether a certain rank already is present
-			n--;
+			for (BinomialTreeNode child : toBeMerged) {
+				merge(child, result);
+			}
 
 			if (!roots.isEmpty()) {
 				resetMinPointer();
