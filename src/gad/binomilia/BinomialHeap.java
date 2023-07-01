@@ -75,12 +75,12 @@ public class BinomialHeap {
 					// the existing element of the same rank
 					roots.add(child);
 					merge(child, result);
-					result.addToIntermediateStep(roots);
 				} else {
 					roots.add(child);
-					result.addToIntermediateStep(roots);
 				}
 			}
+			mergeByLoop();
+			result.addToIntermediateStep(roots);
 
 			// Decrease the number of all nodes by 1
 			// The Decrease has to happen at the end otherwise
@@ -114,12 +114,35 @@ public class BinomialHeap {
 				// if another node with the same rank is present
 				if (hasRank(this.n, mergedNode.rank())) {
 					roots.add(mergedNode);
-					merge(mergedNode, result);
-					result.logIntermediateStep(roots);
+					merge(mergedNode, result); // TODO Recursive merging is not working (cases where 2 elements of tank 1 exist)
 				} else {
 					roots.add(mergedNode);
 				}
+
 				resetMinPointer();
+				return;
+			}
+		}
+	}
+
+	public void mergeByLoop() {
+		roots.sort(Comparator.comparing(BinomialTreeNode::rank));
+		for (int i = 1; i < roots.size(); i++) {
+			if (roots.get(i - 1).rank() == roots.get(i).rank()) {
+				BinomialTreeNode root1 = roots.get(i-1);
+				BinomialTreeNode root2 = roots.get(i);
+
+				// Merge the two nodes using the merge method in BinomialTreeNode
+				BinomialTreeNode mergedNode = BinomialTreeNode.merge(root1, root2);
+
+				// Remove the old nodes
+				roots.remove(root1);
+				roots.remove(root2);
+				roots.add(mergedNode);
+
+				if (!roots.isEmpty()) {
+					resetMinPointer();
+				}
 				return;
 			}
 		}
@@ -174,6 +197,8 @@ public class BinomialHeap {
 		// Test heap
 		StudentResult studentResult = new StudentResult();
 		Random random = new Random();
+
+		/*//Test 1
 		for (int i = 0; i < 2500; i++) {
 			binomialHeap.insert(random.nextInt(-1000, 1000), studentResult);
 		}
@@ -181,6 +206,16 @@ public class BinomialHeap {
 		for (int i = 0; i < 2500; i++) {
 			binomialHeap.deleteMin(studentResult);
 		}
-		System.out.println(dot(binomialHeap.roots));
+		System.out.println(dot(binomialHeap.roots));*/
+
+		//Test 2
+		for (int i = 0; i < 20; i++) {
+			binomialHeap.insert(random.nextInt(-1000, 1000), studentResult);
+			if (i % 5 == 0) {
+				System.out.println(dot(binomialHeap.roots));
+				binomialHeap.deleteMin(studentResult);
+				System.out.println(dot(binomialHeap.roots));
+			}
+		}
 	}
 }
