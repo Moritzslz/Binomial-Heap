@@ -69,7 +69,7 @@ public class BinomialHeap {
 
 			// Add its children to the heap
 			// n is not changed since each child element has been part of n before
-			for (BinomialTreeNode child :children) {
+			for (BinomialTreeNode child : children) {
 				if (hasRank(this.n, child.rank())) {
 					// Add the child to the heap and merge it with
 					// the existing element of the same rank
@@ -88,7 +88,9 @@ public class BinomialHeap {
 			// checking whether a certain rank already is present
 			n--;
 
-			resetMinPointer();
+			if (!roots.isEmpty()) {
+				resetMinPointer();
+			}
 			return minNode.min();
 		} else {
 			throw new NoSuchElementException();
@@ -104,10 +106,9 @@ public class BinomialHeap {
 				// Merge the two nodes using the merge method in BinomialTreeNode
 				BinomialTreeNode mergedNode = BinomialTreeNode.merge(currentNode, node);
 
-				// Remove and log the old nodes
+				// Remove the old nodes
 				roots.remove(currentNode);
 				roots.remove(node);
-				//result.addToIntermediateStep(roots); // TODO this logging may be wrong
 
 				// Add the mergedNode, recursively merge the mergedNode
 				// if another node with the same rank is present
@@ -174,11 +175,11 @@ public class BinomialHeap {
 		// Test heap
 		StudentResult studentResult = new StudentResult();
 		Random random = new Random();
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 2500; i++) {
 			binomialHeap.insert(random.nextInt(-1000, 1000), studentResult);
 		}
 		System.out.println(dot(binomialHeap.roots));
-		for (int i = 0; i < 99; i++) {
+		for (int i = 0; i < 2500; i++) {
 			binomialHeap.deleteMin(studentResult);
 		}
 		System.out.println(dot(binomialHeap.roots));
