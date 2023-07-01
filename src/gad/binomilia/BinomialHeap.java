@@ -35,20 +35,13 @@ public class BinomialHeap {
 			if (nNode.min() < roots.get(minPointer).min()) {
 				minPointer = roots.size();
 			}
-
-			// Check if a node of rank 0 is currently existing
-			if (hasRank(0)) {
-				// Add the new node to the heap and merge it with
-				// the existing element of the same rank
-				roots.add(nNode);
-				result.logIntermediateStep(roots);
+			roots.add(nNode);
+			result.logIntermediateStep(roots);
+			if (hasDoubleRank()) {
 				merge(result);
-			} else {
-				roots.add(nNode);
-				result.logIntermediateStep(roots);
 			}
-			resetMinPointer();
 		}
+			resetMinPointer();
 	}
 
 	public int deleteMin(Result result) {
@@ -65,15 +58,12 @@ public class BinomialHeap {
 			// Add its children to the heap and merge them afterwards
 			// n is not changed since each child element has been part of n before
 			for (BinomialTreeNode child : children) {
-				if (hasRank(child.rank())) {
-					roots.add(child);
-				} else {
-					roots.add(child);
-				}
+				roots.add(child);
 			}
 			result.addToIntermediateStep(roots);
-			merge(result);
-
+			if (hasDoubleRank()) {
+				merge(result);
+			}
 			if (!roots.isEmpty()) {
 				resetMinPointer();
 			}
@@ -84,45 +74,37 @@ public class BinomialHeap {
 	}
 
 	public void merge(Result result) {
-		// Sort rooks by rank
-		roots.sort(Comparator.comparing(BinomialTreeNode::rank));
-		boolean mergeAgain = false;
-		// Find the existing node with the same rank as the new one
+		// Loop through roots and merge all with same rank
+		boolean mergeAgain = true;
+		while (mergeAgain) {
+			for (int i = 1; i < roots.size(); i++) {
+				BinomialTreeNode root1 = roots.get(i - 1);
+				BinomialTreeNode root2 = roots.get(i);
+				if (root1.rank() == root2.rank()) {
+					BinomialTreeNode mergedNode = BinomialTreeNode.merge(root1, root2);
+					roots.remove(root1);
+					roots.remove(root2);
+					roots.add(mergedNode);
+					// Sort rooks by rank
+					roots.sort(Comparator.comparing(BinomialTreeNode::rank));
+					result.logIntermediateStep(roots);
+				}
+			}
+			if (!hasDoubleRank()) {
+				mergeAgain = false;
+			}
+		}
+	}
+
+	public boolean hasDoubleRank() {
 		for (int i = 1; i < roots.size(); i++) {
 			BinomialTreeNode root1 = roots.get(i - 1);
 			BinomialTreeNode root2 = roots.get(i);
 			if (root1.rank() == root2.rank()) {
-
-				// Merge the two nodes using the merge method in BinomialTreeNode
-				BinomialTreeNode mergedNode = BinomialTreeNode.merge(root1, root2);
-
-				// Remove the old nodes
-				roots.remove(root1);
-				roots.remove(root2);
-
-				// Add the mergedNode, recursively merge the mergedNode
-				// if another node with the same rank is present
-				if (hasRank(mergedNode.rank())) {
-					roots.add(mergedNode);
-					result.logIntermediateStep(roots);
-				} else {
-					roots.add(mergedNode);
-					result.logIntermediateStep(roots);
-				}
-			}
-			resetMinPointer();
-		}
-	}
-
-	public boolean hasRank(int rank) {
-		roots.sort(Comparator.comparing(BinomialTreeNode::rank));
-		for (BinomialTreeNode root : roots) {
-			if (root.rank() == rank) {
 				return true;
 			}
 		}
 		return false;
-		//return ((totalNumberOfNodes >> rank) & 1) == 1;
 	}
 
 	public void resetMinPointer() {
