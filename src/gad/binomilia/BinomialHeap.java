@@ -71,7 +71,7 @@ public class BinomialHeap {
 				}
 			}
 			result.addToIntermediateStep(roots);
-
+			//merge(result);
 
 			if (!roots.isEmpty()) {
 				resetMinPointer();
