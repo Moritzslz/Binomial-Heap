@@ -49,8 +49,6 @@ public class BinomialHeap {
 				result.logIntermediateStep(roots);
 			}
 		}
-		mergeByLoop(result);
-
 		// Increase the number of all nodes by 1
 		// The Increase has to happen at the end otherwise
 		// the hasRank method would return wrong values when
@@ -80,8 +78,7 @@ public class BinomialHeap {
 					roots.add(child);
 				}
 			}
-			mergeByLoop(result);
-
+			result.addToIntermediateStep(roots);
 			// Decrease the number of all nodes by 1
 			// The Decrease has to happen at the end otherwise
 			// the hasRank method would return wrong values when
@@ -114,39 +111,15 @@ public class BinomialHeap {
 				// if another node with the same rank is present
 				if (hasRank(this.n, mergedNode.rank())) {
 					roots.add(mergedNode);
-					merge(mergedNode, result); // TODO Recursive merging is not working (cases where 2 elements of tank 1 exist)
+					//result.addToIntermediateStep(roots);
+					merge(mergedNode, result);
 				} else {
 					roots.add(mergedNode);
+					//result.addToIntermediateStep(roots);
 				}
 
 				resetMinPointer();
 				return;
-			}
-		}
-	}
-
-	public void mergeByLoop(Result result) {
-		roots.sort(Comparator.comparing(BinomialTreeNode::rank));
-		for (int i = 1; i < roots.size(); i++) {
-			if (roots.get(i - 1).rank() == roots.get(i).rank()) {
-				BinomialTreeNode root1 = roots.get(i-1);
-				BinomialTreeNode root2 = roots.get(i);
-
-				// Merge the two nodes using the merge method in BinomialTreeNode
-				BinomialTreeNode mergedNode = BinomialTreeNode.merge(root1, root2);
-
-				// Remove the old nodes
-				roots.remove(root1);
-				roots.remove(root2);
-				roots.add(mergedNode);
-				result.addToIntermediateStep(roots);
-
-				if (!roots.isEmpty()) {
-					resetMinPointer();
-				}
-				return;
-			} else {
-				result.addToIntermediateStep(roots);
 			}
 		}
 	}
