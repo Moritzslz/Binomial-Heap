@@ -106,13 +106,15 @@ public class BinomialHeap {
 				} else {
 					roots.add(mergedNode);
 					result.logIntermediateStep(roots);
+					if (hasRank(mergedNode.rank())) {
+						merge(mergedNode, result);
+					}
 				}
 
 				resetMinPointer();
 				return;
 			}
 		}
-		result.addToIntermediateStep(roots);
 	}
 
 	public boolean hasRank(int rank) {
