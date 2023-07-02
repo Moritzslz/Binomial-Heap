@@ -52,14 +52,15 @@ public class BinomialHeap {
 
 			// Remove the minimum node
 			roots.remove(minNode);
-			result.logIntermediateStep(roots);
+			//result.logIntermediateStep(roots);
 
 			// Add its children to the heap and merge them afterwards
 			// n is not changed since each child element has been part of n before
 			for (BinomialTreeNode child : children) {
 				roots.add(child);
 			}
-			result.addToIntermediateStep(roots);
+			result.logIntermediateStep(roots);
+			//result.addToIntermediateStep(roots);
 			if (hasDoubleRank()) {
 				merge(result);
 			}
@@ -84,7 +85,6 @@ public class BinomialHeap {
 					BinomialTreeNode mergedNode = BinomialTreeNode.merge(root1, root2);
 					roots.remove(root1);
 					roots.set(i - 1, mergedNode);
-					i--;
 					//roots.sort(Comparator.comparing(BinomialTreeNode::rank));
 					result.logIntermediateStep(roots);
 				}
